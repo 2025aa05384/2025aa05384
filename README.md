@@ -102,6 +102,13 @@ project-folder/ │-- app.py\
 │-- requirements.txt\
 │-- README.md\
 │-- model/
+		│-- Decision Tree.pkl
+		│-- KNN.pkl
+		│-- Logistic Regression.pkl
+		│-- Naive Bayes.pkl
+		│-- Random Forest.pkl
+		│-- XGBoost.pkl
+		│-- train_models.py
 
 ------------------------------------------------------------------------
 
