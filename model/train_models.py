@@ -1,11 +1,9 @@
 import pandas as pd
-import numpy as np
 import joblib
+import os
 
-from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -13,26 +11,50 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 
-from sklearn.metrics import (
-    accuracy_score, roc_auc_score,
-    precision_score, recall_score,
-    f1_score, matthews_corrcoef
-)
+# ===============================
+# 1. READ CSV (same format as app upload)
+# ===============================
 
-# Load dataset
-data = load_breast_cancer()
-X = pd.DataFrame(data.data, columns=data.feature_names)
-y = data.target
+# Put your training CSV inside project root
+DATA_FILE = "training_data.csv"
 
-# Split
+if not os.path.exists(DATA_FILE):
+    raise FileNotFoundError(
+        f"{DATA_FILE} not found in project root folder"
+    )
+
+data = pd.read_csv(DATA_FILE)
+
+# ===============================
+# 2. SPLIT FEATURES & TARGET
+# ===============================
+
+if "target" not in data.columns:
+    raise ValueError("CSV must contain a 'target' column")
+
+X = data.drop("target", axis=1)
+y = data["target"]
+
+feature_names = X.columns.tolist()
+
+# ===============================
+# 3. TRAIN TEST SPLIT
+# ===============================
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Scale
+# ===============================
+# 4. SCALING
+# ===============================
+
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+
+# ===============================
+# 5. MODELS
+# ===============================
 
 models = {
     "Logistic Regression": LogisticRegression(max_iter=500),
@@ -43,22 +65,14 @@ models = {
     "XGBoost": XGBClassifier(eval_metric="logloss")
 }
 
-results = {}
+os.makedirs("model", exist_ok=True)
 
 for name, model in models.items():
     model.fit(X_train, y_train)
-    preds = model.predict(X_test)
-    prob = model.predict_proba(X_test)[:,1]
-
-    results[name] = {
-        "Accuracy": accuracy_score(y_test, preds),
-        "AUC": roc_auc_score(y_test, prob),
-        "Precision": precision_score(y_test, preds),
-        "Recall": recall_score(y_test, preds),
-        "F1": f1_score(y_test, preds),
-        "MCC": matthews_corrcoef(y_test, preds)
-    }
-
     joblib.dump(model, f"model/{name}.pkl")
 
-print(pd.DataFrame(results).T)
+# Save scaler & feature names
+joblib.dump(scaler, "model/scaler.pkl")
+joblib.dump(feature_names, "model/feature_names.pkl")
+
+print("Models trained successfully!")
