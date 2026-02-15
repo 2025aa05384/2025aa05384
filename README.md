@@ -101,14 +101,14 @@ dataset:
 project-folder/ │-- app.py\
 │-- requirements.txt\
 │-- README.md\
-│-- model/
-		│-- Decision Tree.pkl
-		│-- KNN.pkl
-		│-- Logistic Regression.pkl
-		│-- Naive Bayes.pkl
-		│-- Random Forest.pkl
-		│-- XGBoost.pkl
-		│-- train_models.py
+│-- model/\
+&emsp;&emsp;│-- Decision Tree.pkl\
+&emsp;&emsp;│-- KNN.pkl\
+&emsp;&emsp;│-- Logistic Regression.pkl\
+&emsp;&emsp;│-- Naive Bayes.pkl\
+&emsp;&emsp;│-- Random Forest.pkl\
+&emsp;&emsp;│-- XGBoost.pkl\
+&emsp;&emsp;│-- train_models.py
 
 ------------------------------------------------------------------------
 
